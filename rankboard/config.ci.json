@@ -1,0 +1,33 @@
+{
+  "brand": "moodifypet",
+  "brandTitle": "MOODIFYPET",
+  "teamName": "MoodifyPet",
+  "marketplace": "Amazon US",
+  "days": 30,
+  "spillDir": "../.rankboard/spill",
+  "out": "../.rankboard/build",
+  "markDays": [5, 6, 0],
+  "markLabel": "Fri · Sat · Sun",
+  "seal": {
+    "user": "moodifypet",
+    "siteDir": "..",
+    "publicUrl": "https://hocmaa-lang.github.io/moodifypet-reports/",
+    "gitEmail": "github-actions[bot]@users.noreply.github.com",
+    "gitName": "github-actions[bot]",
+    "publish": [
+      { "src": "keywords.html", "as": "index.html", "passEnv": "RANKBOARD_MOODIFYPET_PASS", "title": "MOODIFYPET — keyword rank by day" },
+      { "src": "keywords.html", "as": "keywords.html", "passEnv": "RANKBOARD_MOODIFYPET_PASS", "title": "MOODIFYPET — keyword rank by day" },
+      { "src": "dashboard.html", "as": "dashboard.html", "passEnv": "RANKBOARD_MOODIFYPET_PASS", "title": "MOODIFYPET — organic rank summary" }
+    ]
+  },
+  "products": [
+    {
+      "key": "family",
+      "radarId": "2d2ff530-51fb-4d4d-8835-163e92ab57a5",
+      "asin": "B0DZ8X31C2",
+      "name": "Cat Litter Odor Eliminator — all 5 pack sizes (1 · 2 · 3 · 4 · 12)",
+      "short": "Litter Odor Eliminator",
+      "file": "family.json"
+    }
+  ]
+}

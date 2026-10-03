@@ -1,0 +1,3 @@
+# Working files for the refresh job. The plaintext dashboard is built here before
+# it is sealed — it must never be committed to a public repo.
+.rankboard/

@@ -1,0 +1,67 @@
+name: Rankboard refresh
+
+# Rebuilds MoodifyPet's organic-rank heatmap from Data Dive and republishes it
+# behind the SAME URL and the SAME password. Runs in the cloud, so it does not
+# depend on anyone's laptop being awake.
+on:
+  schedule:
+    - cron: '30 5 * * *'      # 05:30 UTC = 08:30 Israel, after the day's crawl lands
+  workflow_dispatch:           # and on demand from the Actions tab
+    inputs:
+      force:
+        description: 'Publish even if the pages are unchanged (use after rotating the password)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: rankboard-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write     # commit the resealed pages
+  pages: write        # deploy them
+  id-token: write     # required by deploy-pages
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # run.js only WARNS when Chrome is absent and skips the render check. On an
+      # unattended run that would let a blank page reach the client, so assert it.
+      - name: Assert Chrome is available for the render check
+        run: |
+          test -x /usr/bin/google-chrome || { echo "Chrome missing — refusing to publish unverified"; exit 1; }
+          /usr/bin/google-chrome --version
+
+      - name: Refresh, verify and publish
+        env:
+          DATADIVE_API_KEY: ${{ secrets.DATADIVE_API_KEY }}
+          RANKBOARD_MOODIFYPET_PASS: ${{ secrets.RANKBOARD_MOODIFYPET_PASS }}
+        run: |
+          node rankboard/scripts/refresh.js rankboard/config.ci.json --push \
+            ${{ inputs.force && '--force' || '' }}
+
+      # Publish ONLY the sealed pages. The build scripts and the config live in
+      # the repo but have no business being served from the client's site.
+      - name: Stage the site
+        run: |
+          mkdir -p _site
+          cp index.html keywords.html dashboard.html _site/
+          touch _site/.nojekyll
+          ls -la _site
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
