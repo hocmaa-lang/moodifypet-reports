@@ -53,7 +53,7 @@ const CHROME = [
 // Needles must match the DOM as written, not as displayed — these labels are
 // upper-cased by CSS, so searching for the uppercase form always fails.
 const CHECKS = {
-  'keywords.html': 'keywords ranking at least once',
+  'keywords.html': 'ranking at least once',
   'dashboard.html': 'search vol in top 10',
 };
 // data-ready is set on <body> by the page's own script as its last act, so it only

@@ -5,7 +5,7 @@ const fs = require('fs');
 // Shown on the page so a reader's screenshot says which template they are looking at
 // (a cached older copy vs. the current one). Bump it whenever the template changes;
 // it is deliberately NOT a timestamp, which would make every refresh look "changed".
-const TEMPLATE_VERSION = 'v2026-09-30d';
+const TEMPLATE_VERSION = 'v2026-10-03a';
 const P = JSON.parse(fs.readFileSync(process.argv[2] + '/payload.json', 'utf8'));
 
 // attach the per-day gap flags onto each product so the client can grey those columns
@@ -125,6 +125,10 @@ td.n{text-align:right;font-variant-numeric:tabular-nums}
   <button data-p="all" class="on">All products</button>
   ${P.products.map(p => `<button data-p="${p.key}">${p.short}</button>`).join('')}
   <input id="q" placeholder="filter keywords…">
+  <select id="scope" title="Which keywords to list">
+    <option value="ranked"${P.showAll?'':' selected'}>Ranking keywords only</option>
+    <option value="all"${P.showAll?' selected':''}>All tracked keywords</option>
+  </select>
   <select id="sort">
     <option value="sv">Sort: search volume</option>
     <option value="best">Sort: best rank</option>
@@ -213,7 +217,7 @@ document.getElementById('asins').innerHTML=Object.entries(ASINMAP)
   .map(([a,v])=>'<option value="'+a+'">'+v.pn+(v.via?' (family of '+v.via+')':'')+'</option>').join('');
 const PASIN=Object.fromEntries(DATA.products.map(p=>[p.key,p.asin||'']));
 
-let filt='all',sort='sv',q='',aq='',LAST=0;
+let filt='all',sort='sv',q='',aq='',LAST=0,scope=document.getElementById('scope').value;
 function asinMatch(pk){
   if(!aq) return true;
   return Object.entries(ASINMAP).some(([a,v])=>v.pk===pk&&a.includes(aq));
@@ -231,7 +235,7 @@ function asinNote(){
 }
 function render(){
   asinNote();
-  let list=ALL.filter(r=>(filt==='all'||r.pk===filt)&&r.days>0&&asinMatch(r.pk)
+  let list=ALL.filter(r=>(filt==='all'||r.pk===filt)&&(scope==='all'||r.days>0)&&asinMatch(r.pk)
     &&(!q||r.kw.toLowerCase().includes(q)));
   const key={sv:r=>-r.sv,best:r=>r.best==null?999:r.best,now:r=>r.end==null?999:r.end,
              move:r=>r.delta==null?999:r.delta};
@@ -240,7 +244,8 @@ function render(){
     document.getElementById('asinnote').innerHTML+=' <b>No keyword has ranked for it in this window yet</b>'+
       ' — a newly created radar fills in after its first crawls.';
   LAST=list.length;
-  document.getElementById('cnt').textContent=list.length+' keywords ranking at least once';
+  const nr=list.filter(r=>r.days>0).length;
+  document.getElementById('cnt').textContent=scope==='all'?list.length+' keywords tracked · '+nr+' ranking at least once':list.length+' keywords ranking at least once';
   document.getElementById('rows').innerHTML=list.map(r=>{
     const cells=r.series.map((v,i)=>{
       const f=r.flags[i];
@@ -289,6 +294,7 @@ document.querySelectorAll('.bar button').forEach(b=>b.addEventListener('click',(
   document.getElementById('asin').value='';aq='';
   b.classList.add('on');filt=b.dataset.p;render();}));
 document.getElementById('sort').addEventListener('change',e=>{sort=e.target.value;render();});
+document.getElementById('scope').addEventListener('change',e=>{scope=e.target.value;render();});
 document.getElementById('q').addEventListener('input',e=>{q=e.target.value.toLowerCase();render();});
 // ONE delegated listener for the tooltip. This used to bind mousemove + mouseleave on
 // every cell and re-bind all of them on every filter click — ~25,000 listeners for

@@ -8,6 +8,7 @@
   "out": "../.rankboard/build",
   "markDays": [5, 6, 0],
   "markLabel": "Fri · Sat · Sun",
+  "showAllKeywords": true,
   "seal": {
     "user": "moodifypet",
     "siteDir": "..",
