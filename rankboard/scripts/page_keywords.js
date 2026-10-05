@@ -5,7 +5,7 @@ const fs = require('fs');
 // Shown on the page so a reader's screenshot says which template they are looking at
 // (a cached older copy vs. the current one). Bump it whenever the template changes;
 // it is deliberately NOT a timestamp, which would make every refresh look "changed".
-const TEMPLATE_VERSION = 'v2026-10-03a';
+const TEMPLATE_VERSION = 'v2026-10-05a';
 const P = JSON.parse(fs.readFileSync(process.argv[2] + '/payload.json', 'utf8'));
 
 // attach the per-day gap flags onto each product so the client can grey those columns
@@ -17,7 +17,7 @@ for (const p of P.products) p.flags = p.trend.map(t => t.gap ? 2 : (t.partial ? 
 const MARK = P.markDays || [];
 const MARKLBL = P.markLabel || (MARK.length ? 'marked days' : '');
 
-const html = `<!doctype html><html lang="en" translate="no" class="notranslate"><head><meta charset="utf-8"><meta name="google" content="notranslate">
+const html = `<!doctype html><html lang="en" translate="no" class="notranslate"${P.theme ? ` data-theme="${P.theme}"` : ""}><head><meta charset="utf-8"><meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${P.brandTitle} — keyword rank by day</title>
 <style>

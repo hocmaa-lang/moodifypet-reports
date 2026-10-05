@@ -5,7 +5,7 @@ const P = JSON.parse(fs.readFileSync(process.argv[2] + '/payload.json', 'utf8'))
 // Categorical palette — validated with scripts/validate_palette.js:
 //   light  #128F5E,#C2620A,#4169C4  on #FFFFFF  → all six checks PASS
 //   dark   #25A473,#D9762F,#5F8CE0  on #141A17  → all six checks PASS
-const html = `<!doctype html><html lang="en" translate="no" class="notranslate"><head><meta charset="utf-8"><meta name="google" content="notranslate">
+const html = `<!doctype html><html lang="en" translate="no" class="notranslate"${P.theme ? ` data-theme="${P.theme}"` : ""}><head><meta charset="utf-8"><meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${P.brandTitle} — organic rank dashboard</title>
 <style>

@@ -32,7 +32,7 @@ const DOW = d => new Date(d + 'T00:00:00Z').getUTCDay();
 const out = { brand: CFG.brand, brandTitle: CFG.brandTitle || CFG.brand,
   teamName: CFG.teamName || CFG.brandTitle || CFG.brand,
   marketplace: CFG.marketplace || 'Amazon US', markDays: MARK,
-  markLabel: CFG.markLabel || '', showAll: !!CFG.showAllKeywords, built: null, products: [], dates: [] };
+  markLabel: CFG.markLabel || '', showAll: !!CFG.showAllKeywords, theme: (CFG.theme === 'light' || CFG.theme === 'dark') ? CFG.theme : '', built: null, products: [], dates: [] };
 const allDates = new Set();
 
 for (const p of PRODUCTS) {
